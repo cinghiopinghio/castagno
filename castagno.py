@@ -1,11 +1,10 @@
-import configparser
 
 class Pasta():
     def __init__(self,s):
         self.cod = s[0]
         self.cod_ean = s[1]
         self.cod_intra = s[2]
-        self.descrizione = s[3][:40]
+        self.descrizione = s[3]#[:40]
         self.pz = int(s[5])
         self.peso = s[6]
         self.prezzo = float(s[7].split()[1])
@@ -17,19 +16,14 @@ class Pasta():
             self.price25 = float(s[12].split()[1])
     def __str__(self):
         return self.cod+'\t'+self.descrizione
-class Ordini():
-    def __init__(self,nome,ordine):
-        self.nome = nome
-        self.ordine = []
-        for cod in ordine:
-            self.ordine.append(Ordine(cod,ordine[cod]))
 class Ordine():
     def __init__(self,cod,numero):
         self.cod = cod
         self.num = numero
+    def totale(self,P):
+        return P[self.cod].prezzo * P[self.cod].pz * (1+P[self.cod].iva)
     def __str__(self):
         return self.cod+' - {}'.format(self.num)
-
         
 def read_file(filename):
     P={}
@@ -67,13 +61,20 @@ def leggi_ordini(filename):
 def main():
     P = read_file('2013.csv')
     print (len(P),' tipi di roba')
-    print (P['1PBSPA'])
 
-    a = leggi_ordini('ordini.ini')
-    for aa in a:
-        print ('---',aa)
-        for o in a[aa]:
-            print (o, P[o.cod].prezzo*P[o.cod].pz)
+    ordi = leggi_ordini('ordini.ini')
+    totali = {}
+    for gente in ordi:
+        print ('---',gente)
+        tot = 0
+        for pasta in ordi[gente]:
+            par_tot = pasta.totale(P)
+            print ('{0:12s} - {1:12.2f}'.format(pasta, par_tot))
+            #print ('-------------------',P[pasta.cod].descrizione)
+            tot += par_tot
+        totali[gente] = tot
+        print ('totale = {0:12.2f}'.format(tot))
+    print ('\nSpesa Totale = {0:12.2f}'.format(sum(totali.values())))
     return 0
 
 if __name__ == '__main__':
