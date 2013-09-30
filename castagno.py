@@ -79,7 +79,7 @@ def main():
             par_tot = pasta.totale(P)
             print ('{0:12s} - {1:12.2f}'.format(pasta, par_tot))
             tot += par_tot
-            if pasta not in paste:
+            if pasta.cod not in paste:
                 paste[pasta.cod] = pasta.num
             else:
                 paste[pasta.cod] += pasta.num
