@@ -21,13 +21,15 @@ class Ordine():
         self.cod = cod
         self.num = numero
     def totale(self,P):
-        return prezzo (self.cod,P)
+        return prezzo (self.cod,P,self.num)
         #return P[self.cod].prezzo * P[self.cod].pz * (1+P[self.cod].iva)
     def __str__(self):
         return self.cod+' - {}'.format(self.num)
         
-def prezzo (cod,P,num=None):
-    prezzo_pacco = P[cod].prezzo * P[cod].pz * (1+P[cod].iva)
+def prezzo (cod,P,num=None,iva=True):
+    prezzo_pacco = P[cod].prezzo * P[cod].pz
+    if iva:
+        prezzo_pacco *= 1+P[cod].iva
     if num is not None:
         prezzo_pacco *= num
     return prezzo_pacco
@@ -87,12 +89,15 @@ def main():
         print ('totale {0:25s}= {1:8.2f}'.format(gente,tot))
 
     print ('\nOrdine Totale:')
+    num_colli = 0
     for pasta in paste.keys():
-        prz = prezzo(pasta,P,num=paste[pasta])
-        print ('{0:12s} num {1:3d} prezzo {2:6.2f}'.format(pasta,\
+        prz = prezzo(pasta,P,num=paste[pasta],iva=True)
+        print ('codice {0:12s} num colli {1:3d} prezzo {2:6.2f}'.format(pasta,\
                                                          paste[pasta],\
                                                          prz))
+        num_colli += paste[pasta]
     print ('\nSpesa Totale = {0:12.2f}'.format(sum(totali.values())))
+    print ('Numero colli totale =', num_colli)
     return 0
 
 if __name__ == '__main__':
